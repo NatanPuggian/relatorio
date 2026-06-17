@@ -1,0 +1,6 @@
+# Screenshots / temporários de verificação
+*.jpeg
+*.png
+.playwright-mcp/
+/tmp/
+srv*.log
