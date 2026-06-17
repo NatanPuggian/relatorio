@@ -232,7 +232,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--mut);fon
       <div class="tl-head">
         <div>
           <div class="card-t" id="tlTitle">Comissão final, cadastros e CPAs por dia</div>
-          <div class="card-d">Barras = comissão final (R$) · linhas = volume de cadastros e CPAs qualificados</div>
+          <div class="card-d">Barras = comissão final (R$) · linhas = funil de volume (cadastros → FTDs → CPAs qualificados)</div>
         </div>
         <div class="tl-sel">
           <label>Ver:</label>
@@ -399,7 +399,7 @@ ag.forEach(x=>tlAf.innerHTML+=`<option value="${x.a}">${x.a}</option>`);
 let tlChart=null;
 function tlSeries(af){
   return DAYS.map(d=>{const r=af?byAf(af).filter(z=>z.d===d):byDay(d);
-    return{fin:sum(r,'fin'),reg:sum(r,'reg'),cpa:sum(r,'cpa'),rev:sum(r,'rev')};});
+    return{fin:sum(r,'fin'),reg:sum(r,'reg'),ftd:sum(r,'ftd'),cpa:sum(r,'cpa'),rev:sum(r,'rev')};});
 }
 function renderTimeline(af){
   const s=tlSeries(af);
@@ -408,11 +408,13 @@ function renderTimeline(af){
   if(tlChart)tlChart.destroy();
   tlChart=new Chart(document.getElementById('timeline'),{data:{labels:DAYS.map(dlab),
     datasets:[
-     {type:'bar',label:'Comissão final',data:s.map(x=>x.fin),backgroundColor:barColor,borderRadius:6,yAxisID:'y',order:3},
+     {type:'bar',label:'Comissão final',data:s.map(x=>x.fin),backgroundColor:barColor,borderRadius:6,yAxisID:'y',order:4},
      {type:'line',label:'Cadastros',data:s.map(x=>x.reg),borderColor:'#4aa8ff',backgroundColor:'#4aa8ff',
       tension:.3,yAxisID:'y1',pointRadius:4,order:1},
+     {type:'line',label:'FTDs',data:s.map(x=>x.ftd),borderColor:'#2ed4c6',backgroundColor:'#2ed4c6',
+      tension:.3,yAxisID:'y1',pointRadius:4,order:2},
      {type:'line',label:'CPAs',data:s.map(x=>x.cpa),borderColor:'#ffce4f',backgroundColor:'#ffce4f',
-      tension:.3,yAxisID:'y1',pointRadius:4,borderDash:[5,4],order:2}]},
+      tension:.3,yAxisID:'y1',pointRadius:4,borderDash:[5,4],order:3}]},
     options:{plugins:{legend:{position:'top',labels:{boxWidth:12,padding:14}},
       tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y'?BRL(c.raw):NUM(c.raw))}}},
      scales:{y:{position:'left',grid:{color:'#1c2531'},ticks:{callback:v=>BRLk(v)},title:{display:true,text:'Comissão (R$)'}},
